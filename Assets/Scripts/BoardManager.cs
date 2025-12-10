@@ -20,6 +20,36 @@ public class BoardManager : MonoBehaviour
     private float _xOffset;
     private float _yOffset;
 
+    // A–Z frequencies in English (sum = 100)
+    private static readonly float[] letterFrequencies = {
+    8.167f, // A
+    1.492f, // B
+    2.782f, // C
+    4.253f, // D
+    12.702f,// E
+    2.228f, // F
+    2.015f, // G
+    6.094f, // H
+    6.966f, // I
+    0.153f, // J
+    0.772f, // K
+    4.025f, // L
+    2.406f, // M
+    6.749f, // N
+    7.507f, // O
+    1.929f, // P
+    0.095f, // Q
+    5.987f, // R
+    6.327f, // S
+    9.056f, // T
+    2.758f, // U
+    0.978f, // V
+    2.360f, // W
+    0.150f, // X
+    1.974f, // Y
+    0.074f  // Z
+    };
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -40,7 +70,7 @@ public class BoardManager : MonoBehaviour
         _tiles = new LetterTile[rows, cols];
 
         // Compute offsets once
-        _xOffset = -(cols - 1) * tileSpacing * 0.5f;
+        _xOffset = -(cols - 1) * tileSpacing * 0.95f;
         _yOffset = -(rows - 1) * tileSpacing * 0.5f;
 
         for (int r = 0; r < rows; r++)
@@ -64,11 +94,27 @@ public class BoardManager : MonoBehaviour
                            0f);
     }
 
+
     private char GetRandomLetter()
     {
-        // Basic A–Z random letter (you can later weight this by frequency)
-        int index = Random.Range(0, 26); // 0–25
-        return (char)('A' + index);
+        float total = 0f;
+        foreach (float freq in letterFrequencies)
+            total += freq;
+
+        float roll = Random.Range(0f, total);
+        float cumulative = 0f;
+
+        for (int i = 0; i < letterFrequencies.Length; i++)
+        {
+            cumulative += letterFrequencies[i];
+            if (roll <= cumulative)
+            {
+                return (char)('A' + i);
+            }
+        }
+
+        // Fallback (should never hit)
+        return 'E';
     }
 
     public LetterTile GetTile(int r, int c)
