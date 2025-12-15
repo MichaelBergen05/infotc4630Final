@@ -185,4 +185,20 @@ public class BoardManager : MonoBehaviour
             }
         }
     }
+    public void ClearAndRefillAll()
+    {
+        for (int r = 0; r < rows; r++)
+        {
+            for (int c = 0; c < cols; c++)
+            {
+                if (_tiles[r, c] != null)
+                {
+                    Destroy(_tiles[r, c].gameObject);
+                    _tiles[r, c] = null;
+                }
+            }
+        }
+
+        GenerateBoard();
+    }
 }
